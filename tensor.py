@@ -104,3 +104,15 @@ print("LOGITS: ", logits) #Logits are apparently predicitions that the model cre
 print("LOSS: ", f_loss)
 print("PREDICTION: ", correct_pred)
 
+tf.set_random_seed(1234)
+sess = tf.Session()
+sess.run(tf.global_variables_initializer())
+
+for i in range(201): #Using 201 to be able to get to 200
+	print('EPOCH', i)
+	_, accuracy_val = sess.run([train_op, accuracy], feed_dict={x: n_images, y: labels}) #going to run the session, let's train the model
+	if i % 10 == 0: #stop every 10 and print the loss
+		print("Loss: ", f_loss)
+	print('DONE')
+	
+
