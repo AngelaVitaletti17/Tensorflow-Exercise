@@ -6,6 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from skimage.color import rgb2gray
 from skimage import transform
+import random
 
 def get_that_data(dir):
 	dirs = [thing for thing in os.listdir(dir) if os.path.isdir(os.path.join(dir, thing))]
@@ -115,4 +116,38 @@ for i in range(201): #Using 201 to be able to get to 200
 		print("Loss: ", f_loss)
 	print('DONE')
 	
+#We're going to pick some images
+sample = random.sample(range(len(n_images)), 40)
+sample_imgs = [n_images[i] for i in sample]
+sample_lbls = [labels[i] for i in sample]
 
+pred = sess.run([correct_pred], feed_dict={x: sample_imgs})[0] #Run on the sample images we've just picked
+print(sample_lbls)
+print(pred)
+
+#Actually show the stuff
+fig = plt.figure(figsize=(10,10))
+for i in range (len(sample_imgs)):
+	truth = sample_lbls[i]
+	predi = pred[i]
+	plt.subplot(5,8,i+1)
+	plt.axis('off')
+	color='green' if truth == predi else 'red'
+	plt.text(40, 10, "Truth:		{0}\nPrediction: {1}".format(truth, predi), fontsize=12, color=color)
+	plt.imshow(sample_imgs[i], cmap="gray")
+plt.show()
+
+#Let's compare to test
+test_images, test_labels = get_that_data(test_PATH)
+n_test_images = [transform.resize(image, (28, 28)) for image in test_images]
+n_test_images = rgb2gray(np.array(n_test_images))
+
+pred = sess.run([correct_pred], feed_dict={x:n_test_images})[0]
+
+match_count = sum([int(y == y_) for y, y_ in zip(test_labels, pred)])
+
+accuracy = match_count / len(test_labels)
+
+print("Test Results: {:.3f}".format(accuracy)) #print accuracy to 3 decimal points
+
+sess.close()
