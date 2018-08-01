@@ -93,7 +93,7 @@ logits = tf.contrib.layers.fully_connected(f_imgs, 62, tf.nn.relu) #This will co
 f_loss = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(labels = y, logits = logits)) #From my understanding, a loss function pretty much tells you if your algorithm is working properly, in terms of accurate predictions/assumptions
 #This specific function from tensorflow says that it computers the error when classifying things, according to the documentation, assuming there can only be one classification
 
-train_op = tf.train.AdamOptimizer(learning_rate=0.001).minimize(f_loss) #The Adam Optimizer implements an algorithm that (again from my understanding) is used to keep track of learning rates for multiple network layers
+train_op = tf.train.AdamOptimizer(learning_rate=0.002).minimize(f_loss) #The Adam Optimizer implements an algorithm that (again from my understanding) is used to keep track of learning rates for multiple network layers
 #This line of code should allow for an initialization before training of a model
 
 correct_pred = tf.argmax(logits, 1)
