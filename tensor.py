@@ -75,3 +75,32 @@ plt.show()
 
 #Now let's do some work with tensor flow!
 
+#We're going to resize these images first
+n_images = [transform.resize(image, (28, 28)) for image in images]
+#Now convert them to gray
+n_images = np.array(n_images)
+n_images = rgb2gray(n_images)
+
+#Let's set up some placeholders
+x = tf.placeholder(dtype = tf.float32, shape = [None, 28, 28]) #unflattened tensor
+y = tf.placeholder(dtype = tf.int32, shape = [None]) #Assuming this will be used for each classification, of which a sign can only have one
+
+f_imgs = tf.contrib.layers.flatten(x) #This flattens actual data (non-placeholder)
+
+logits = tf.contrib.layers.fully_connected(f_imgs, 62, tf.nn.relu) #This will connect the images, assumably, into a layer based on features.
+
+f_loss = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(labels = y, logits = logits)) #From my understanding, a loss function pretty much tells you if your algorithm is working properly, in terms of accurate predictions/assumptions
+#This specific function from tensorflow says that it computers the error when classifying things, according to the documentation, assuming there can only be one classification
+
+train_op = tf.train.AdamOptimizer(learning_rate=0.001).minimize(f_loss) #The Adam Optimizer implements an algorithm that (again from my understanding) is used to keep track of learning rates for multiple network layers
+#This line of code should allow for an initialization before training of a model
+
+correct_pred = tf.argmax(logits, 1)
+
+accuracy = tf.reduce_mean(tf.cast(correct_pred, tf.float32)) #This should compute our accuracy as a floating point value
+
+print("FLAT: ", f_imgs)
+print("LOGITS: ", logits) #Logits are apparently predicitions that the model creates
+print("LOSS: ", f_loss)
+print("PREDICTION: ", correct_pred)
+
